@@ -3,11 +3,11 @@ var createEngine = require('voxel-engine');
 var game = createEngine({
     generate: function(x, y, z) {
         var d = Math.sqrt(x*x + y*y + z*z);
-        return d < 20 && y >= -10 && (y < 0 || y*y <= 0.5*x*x + z*z / 64);
+        return d < 20 && y >= -10 && (y < 3 || y*y <= 0.5*x*x + z*z / 64);
     },
     texturePath: './textures/',
     materials: [ 'grass_top', 'obsidian', 'netherrack' ],
-    startingPosition: [ 0, 100, 0 ]
+    startingPosition: [ 0, 200, 0 ]
 });
 game.appendTo('#container');
 
@@ -18,8 +18,8 @@ game.requestPointerLock('canvas');
 
 // build back plates for the portals out of obsidian and netherrack
 for (var z = -225; z <= 200; z+= 425) {
-    for (var y = 50; y <= 125; y += 25) {
-        for (var x = -75; x <= 50; x += 25) {
+    for (var y = 50; y <= 175; y += 25) {
+        for (var x = -100; x <= 75; x += 25) {
             game.setBlock({ x: x, y: y, z: z }, z < 0 ? 2 : 3);
         }
     }
@@ -28,12 +28,12 @@ for (var z = -225; z <= 200; z+= 425) {
 var createPortal = require('../')(game);
 
 var a = createPortal({
-    x: 0, y: 100, z: 200,
-    width: 100, height: 50
+    x: 0, y: 125, z: 200,
+    width: 150, height: 100
 });
 var b = createPortal({
-    x: 0, y: 100, z: -200,
-    width: 100, height: 50
+    x: 0, y: 125, z: -200,
+    width: 150, height: 100
 });
 
 a.show(b, { x: 0, y: 0, z: 1 });
