@@ -48,4 +48,5 @@ inherits(Servo, EventEmitter);
 
 Servo.prototype.rotate = function (radians) {
     this.rotor.rotation.y += radians;
+    this.emit('rotation', this.rotor.rotation.y);
 };

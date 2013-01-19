@@ -10,7 +10,9 @@
     "devDependencies" : {
         "browserify" : "~1.17.2",
         "voxel-debris" : "~0.0.4",
-        "voxel-engine" : "~0.2.7"
+        "voxel-engine" : "*",
+        "voxel" : "*",
+        "voxel-mesh" : "*"
     },
     "repository" : {
         "type" : "git",
