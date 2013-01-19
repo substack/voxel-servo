@@ -37,6 +37,14 @@ var b = createPortal({
 
 a.show(b, { x: 0, y: 0, z: 1 });
 b.show(a, { x: 0, y: 0, z: -1 });
+
+a.on('enter', function () {
+    game.moveToPosition(b.position);
+});
+
+b.on('enter', function () {
+    game.moveToPosition(a.position);
+});
 window.a = a;
 window.b = b;
 

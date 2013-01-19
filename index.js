@@ -23,15 +23,16 @@ function Portal (game, opts) {
     var camera = this.camera = createCamera(game);
     game.scene.add(camera.camera());
     
-    var monitor = new game.THREE.Mesh(
-        new game.THREE.CubeGeometry(width, height, 0.5),
+    this.monitor = new game.THREE.Mesh(
+        new game.THREE.CubeGeometry(width, height, 10),
         new game.THREE.MeshBasicMaterial({
             map: camera.monitor()
         })
     );
-    var p = monitor.position;
+    this.monitor.geometry.computeBoundingBox();
+    var p = this.monitor.position;
     p.x = pos.x; p.y = pos.y; p.z = pos.z;
-    game.scene.add(monitor);
+    game.scene.add(this.monitor);
 }
 
 inherits(Portal, EventEmitter);
@@ -56,8 +57,13 @@ Portal.prototype.show = function (target, d) {
     var offset = new T.Vector3(pos.x, pos.y, pos.z).addSelf(d);
     var look = new T.Vector3().add(offset, d);
     
+    var box = self.monitor.geometry.boundingBox;
     self.game.on('tick', function(dt) {
         self.camera.render(item, offset, look);
-        var pos = self.game.controls.yawObject.position;
+        var pos = self.game.controls.yawObject.position.clone();
+        pos.subSelf(self.position);
+        if (box.containsPoint(pos)) {
+            self.emit('enter');
+        }
     });
 };
