@@ -35,6 +35,8 @@ var b = createPortal({
     x: 0, y: 125, z: -200,
     width: 150, height: 100
 });
+window.a = a;
+window.b = b;
 
 a.show(b, { x: 0, y: 0, z: 1 });
 b.show(a, { x: 0, y: 0, z: -1 });

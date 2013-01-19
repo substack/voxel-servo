@@ -20,13 +20,14 @@ function Portal (game, opts) {
     var height = opts.height === undefined ? 50 : opts.height;
     this.height = height;
     
-    var camera = this.camera = createCamera(game);
-    game.scene.add(camera.camera());
+    var control = this.control = createCamera(game);
+    this.camera = control.camera();
+    game.scene.add(this.camera);
     
     this.monitor = new game.THREE.Mesh(
         new game.THREE.CubeGeometry(width, height, 1),
         new game.THREE.MeshBasicMaterial({
-            map: camera.monitor()
+            map: control.monitor()
         })
     );
     this.monitor.geometry.computeBoundingBox();
@@ -44,8 +45,8 @@ Portal.prototype.show = function (target, d) {
     var T = self.game.THREE;
     
     var pos = target.position || target;
-    if (!d) d = new T.Vector3(0, 0, 1)
-    else d = new T.Vector3(d.x, d.y, d.z)
+    pos = new T.Vector3(pos.x, pos.y, pos.z);
+    var d = new T.Vector3(d.x, d.y, d.z).normalize();
     
     var item = {
         mesh: new T.Mesh(
@@ -55,21 +56,23 @@ Portal.prototype.show = function (target, d) {
     var p = item.mesh.position;
     p.x = pos.x; p.y = pos.y; p.z = pos.z;
     
-    d.multiplyScalar(50);
-    var offset = new T.Vector3(pos.x, pos.y, pos.z).addSelf(d);
-    var look = new T.Vector3().add(offset, d);
-    
     var box = self.monitor.geometry.boundingBox;
     var index = inside.length;
     inside.push(false);
     
-    self.game.on('tick', function(dt) {
+    if (self._ontick) self.game.removeListener('tick', self._ontick);
+    self._ontick = function (dt) {
+        var pt = self.game.controls.yawObject.position;
+        var delta = pos.clone().subSelf(pt);
+        var offset = pos.clone().subSelf(delta);
+        var dir = delta.clone().normalize();
+        //var look = pos.clone();
+        var look = offset.clone().subSelf(d);
         
-        self.camera.render(item, offset, look);
-        var pos = self.game.controls.yawObject.position.clone();
-        pos.subSelf(self.position);
+        self.control.render(item, offset, look);
         
-        if (box.containsPoint(pos)) {
+        var rel = pt.clone().subSelf(self.position);
+        if (box.containsPoint(rel)) {
             var already = inside.some(Boolean);
             inside[index] = true;
             if (already) return;
@@ -78,5 +81,6 @@ Portal.prototype.show = function (target, d) {
         else {
             inside[index] = false;
         }
-    });
+    };
+    self.game.on('tick', self._ontick);
 };
