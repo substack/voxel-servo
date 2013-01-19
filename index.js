@@ -25,7 +25,7 @@ function Portal (game, opts) {
     game.scene.add(this.camera);
     
     this.monitor = new game.THREE.Mesh(
-        new game.THREE.CubeGeometry(width, height, 1),
+        new game.THREE.CubeGeometry(width, height, 5),
         new game.THREE.MeshBasicMaterial({
             map: control.monitor()
         })
@@ -46,6 +46,8 @@ Portal.prototype.show = function (target, d) {
     
     var pos = target.position || target;
     pos = new T.Vector3(pos.x, pos.y, pos.z);
+    pos.y -= self.game.cubeSize / 2;
+    
     var d = new T.Vector3(d.x, d.y, d.z).normalize();
     
     var item = {
@@ -63,11 +65,10 @@ Portal.prototype.show = function (target, d) {
     if (self._ontick) self.game.removeListener('tick', self._ontick);
     self._ontick = function (dt) {
         var pt = self.game.controls.yawObject.position;
-        var delta = pos.clone().subSelf(pt);
-        var offset = pos.clone().subSelf(delta);
-        var dir = delta.clone().normalize();
-        //var look = pos.clone();
-        var look = offset.clone().subSelf(d);
+        var delta = pt.clone().subSelf(self.position);
+        
+        var offset = pos.clone()
+        var look = pos.clone().subSelf(delta);
         
         self.control.render(item, offset, look);
         
