@@ -1,87 +1,49 @@
-var createCamera = require('voxel-camera');
 var EventEmitter = require('events').EventEmitter;
 var inherits = require('inherits');
 
 module.exports = function (game) {
     return function (opts) {
-        return new Portal(game, opts || {});
+        return new Servo(game, opts || {});
     };
 };
 
-function Portal (game, opts) {
+function Servo (game, opts) {
     var T = game.THREE;
     this.game = game;
     
-    var pos = new T.Vector3(opts.x || 0, opts.y || 0, opts.z || 0);
+    var pos = opts.position || opts;
+    pos = new T.Vector3(pos.x || 0, pos.y || 0, pos.z || 0);
     this.position = pos
     
-    var width = opts.width === undefined ? 100 : opts.width;
-    this.width = width;
-    var height = opts.height === undefined ? 50 : opts.height;
-    this.height = height;
+    var size = game.cubeSize;
     
-    var control = this.control = createCamera(game);
-    this.camera = control.camera();
-    game.scene.add(this.camera);
+    pos.y -= size / 4;
     
-    this.monitor = new game.THREE.Mesh(
-        new game.THREE.CubeGeometry(width, height, 5),
-        new game.THREE.MeshBasicMaterial({
-            map: control.monitor()
-        })
-    );
-    this.monitor.geometry.computeBoundingBox();
-    var p = this.monitor.position;
-    p.x = pos.x; p.y = pos.y; p.z = pos.z;
-    game.scene.add(this.monitor);
+    this.base = createHalf(0xc0c0c0);
+    game.scene.add(this.base);
+    
+    pos.y += size / 2;
+    
+    this.rotor = createHalf(0xf08000);
+    game.scene.add(this.rotor);
+    
+    function createHalf (color) {
+        var m = new T.Mesh(
+            new T.CubeGeometry(size, size / 2, size),
+            new T.MeshLambertMaterial({
+                color: color,
+                ambient: color
+            })
+        );
+        m.translateX(pos.x);
+        m.translateY(pos.y);
+        m.translateZ(pos.z);
+        return m;
+    }
 }
 
-inherits(Portal, EventEmitter);
+inherits(Servo, EventEmitter);
 
-var inside = [];
-
-Portal.prototype.show = function (target, d) {
-    var self = this;
-    var T = self.game.THREE;
-    
-    var pos = target.position || target;
-    pos = new T.Vector3(pos.x, pos.y, pos.z);
-    pos.y -= self.game.cubeSize / 2;
-    
-    var d = new T.Vector3(d.x, d.y, d.z).normalize();
-    
-    var item = {
-        mesh: new T.Mesh(
-            new T.CubeGeometry(10, 10, 10)
-        )
-    };
-    var p = item.mesh.position;
-    p.x = pos.x; p.y = pos.y; p.z = pos.z;
-    
-    var box = self.monitor.geometry.boundingBox;
-    var index = inside.length;
-    inside.push(false);
-    
-    if (self._ontick) self.game.removeListener('tick', self._ontick);
-    self._ontick = function (dt) {
-        var pt = self.game.controls.yawObject.position;
-        var delta = pt.clone().subSelf(self.position);
-        
-        var offset = pos.clone()
-        var look = pos.clone().subSelf(delta);
-        
-        self.control.render(item, offset, look);
-        
-        var rel = pt.clone().subSelf(self.position);
-        if (box.containsPoint(rel)) {
-            var already = inside.some(Boolean);
-            inside[index] = true;
-            if (already) return;
-            self.emit('enter');
-        }
-        else {
-            inside[index] = false;
-        }
-    };
-    self.game.on('tick', self._ontick);
+Servo.prototype.rotate = function (radians) {
+    this.rotor.rotation.y += radians;
 };

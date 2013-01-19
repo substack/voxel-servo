@@ -1,7 +1,7 @@
 {
-    "name" : "voxel-portal",
-    "version" : "0.0.1",
-    "description" : "create teleport portals for voxel.js textured with the camera view at the destination",
+    "name" : "voxel-servo",
+    "version" : "0.0.0",
+    "description" : "animate voxel geometry with servo bricks",
     "main" : "index.js",
     "dependencies" : {
         "voxel-camera" : "~0.1.0",
@@ -14,15 +14,15 @@
     },
     "repository" : {
         "type" : "git",
-        "url" : "git://github.com/substack/voxel-portal.git"
+        "url" : "git://github.com/substack/voxel-servo.git"
     },
-    "homepage" : "https://github.com/substack/voxel-portal",
+    "homepage" : "https://github.com/substack/voxel-servo",
     "keywords" : [
         "voxel",
         "game",
-        "teleport",
-        "portal",
-        "stargate"
+        "servo",
+        "motor",
+        "robotics"
     ],
     "author" : {
         "name" : "James Halliday",
