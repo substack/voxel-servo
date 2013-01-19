@@ -16,6 +16,7 @@ var erase = true;
 function ctrlToggle (ev) { erase = !ev.ctrlKey }
 game.requestPointerLock('canvas');
 
+// build back plates for the portals out of obsidian and netherrack
 for (var z = -225; z <= 200; z+= 425) {
     for (var y = 50; y <= 125; y += 25) {
         for (var x = -75; x <= 50; x += 25) {
@@ -39,14 +40,14 @@ a.show(b, { x: 0, y: 0, z: 1 });
 b.show(a, { x: 0, y: 0, z: -1 });
 
 a.on('enter', function () {
+    console.log('ENTER A');
     game.moveToPosition(b.position);
 });
 
 b.on('enter', function () {
+    console.log('ENTER B');
     game.moveToPosition(a.position);
 });
-window.a = a;
-window.b = b;
 
 game.on('mousedown', function (pos) {
     if (erase) explode(pos)
@@ -55,4 +56,3 @@ game.on('mousedown', function (pos) {
 
 window.addEventListener('keydown', ctrlToggle);
 window.addEventListener('keyup', ctrlToggle);
-

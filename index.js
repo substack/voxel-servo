@@ -24,7 +24,7 @@ function Portal (game, opts) {
     game.scene.add(camera.camera());
     
     this.monitor = new game.THREE.Mesh(
-        new game.THREE.CubeGeometry(width, height, 10),
+        new game.THREE.CubeGeometry(width, height, 1),
         new game.THREE.MeshBasicMaterial({
             map: camera.monitor()
         })
@@ -36,6 +36,8 @@ function Portal (game, opts) {
 }
 
 inherits(Portal, EventEmitter);
+
+var inside = [];
 
 Portal.prototype.show = function (target, d) {
     var self = this;
@@ -58,12 +60,23 @@ Portal.prototype.show = function (target, d) {
     var look = new T.Vector3().add(offset, d);
     
     var box = self.monitor.geometry.boundingBox;
+    var index = inside.length;
+    inside.push(false);
+    
     self.game.on('tick', function(dt) {
+        
         self.camera.render(item, offset, look);
         var pos = self.game.controls.yawObject.position.clone();
         pos.subSelf(self.position);
+        
         if (box.containsPoint(pos)) {
+            var already = inside.some(Boolean);
+            inside[index] = true;
+            if (already) return;
             self.emit('enter');
+        }
+        else {
+            inside[index] = false;
         }
     });
 };
