@@ -11,17 +11,20 @@ var game = createEngine({
 });
 game.appendTo('#container');
 
+var explode = require('voxel-debris')(game);
+var erase = true;
+function ctrlToggle (ev) { erase = !ev.ctrlKey }
+game.requestPointerLock('canvas');
+
 for (var z = -225; z <= 200; z+= 425) {
     for (var y = 50; y <= 125; y += 25) {
         for (var x = -75; x <= 50; x += 25) {
-            game.setBlock({ x: x, y: y, z: z }, 2);
+            game.setBlock({ x: x, y: y, z: z }, z < 0 ? 2 : 3);
         }
     }
 }
 
 var createPortal = require('../')(game);
-var explode = require('voxel-debris')(game);
-window.game = game;
 
 var a = createPortal({
     x: 0, y: 100, z: 200,
@@ -34,6 +37,8 @@ var b = createPortal({
 
 a.show(b, { x: 0, y: 0, z: 1 });
 b.show(a, { x: 0, y: 0, z: -1 });
+window.a = a;
+window.b = b;
 
 game.on('mousedown', function (pos) {
     if (erase) explode(pos)
@@ -43,6 +48,3 @@ game.on('mousedown', function (pos) {
 window.addEventListener('keydown', ctrlToggle);
 window.addEventListener('keyup', ctrlToggle);
 
-var erase = true;
-function ctrlToggle (ev) { erase = !ev.ctrlKey }
-game.requestPointerLock('canvas');

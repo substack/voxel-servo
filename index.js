@@ -56,7 +56,8 @@ Portal.prototype.show = function (target, d) {
     var offset = new T.Vector3(pos.x, pos.y, pos.z).addSelf(d);
     var look = new T.Vector3().add(offset, d);
     
-    game.on('tick', function(dt) {
+    self.game.on('tick', function(dt) {
         self.camera.render(item, offset, look);
+        var pos = self.game.controls.yawObject.position;
     });
 };
