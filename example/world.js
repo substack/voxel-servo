@@ -8,10 +8,23 @@ var game = createEngine({
     materials: [ 'grass_top', 'obsidian', 'netherrack' ],
     startingPosition: [ 0, 200, 0 ]
 });
+
 game.appendTo('#container');
 game.on('mousedown', function (pos) {
-    if (erase) explode(pos)
-    else game.createBlock(pos, 1)
+    if (erase) return explode(pos)
+    var size = game.cubeSize;
+    
+    var c = game.checkBlock(pos);
+    var v = c && c.voxelVector;
+    var p = v && new game.THREE.Vector3(v.x, v.y, v.z).multiplyScalar(size);
+    
+    if (c && p.x === 0 && p.y === 100 && p.z === 0) {
+        p.y += size;
+        game.setBlock(p, 3);
+    }
+    else {
+        game.createBlock(pos, 1)
+    }
 });
 window.addEventListener('keydown', ctrlToggle);
 window.addEventListener('keyup', ctrlToggle);
