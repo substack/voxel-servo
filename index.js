@@ -17,7 +17,9 @@ function Servo (game, opts) {
     
     var size = game.cubeSize;
     
-    pos.y -= size / 4;
+    pos.x += size / 2;
+    pos.y += size / 4;
+    pos.z += size / 2;
     
     this.base = createHalf(0xc0c0c0);
     game.scene.add(this.base);

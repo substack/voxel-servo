@@ -23,6 +23,7 @@ game.requestPointerLock('canvas');
 
 var createServo = require('../')(game);
 var servo = createServo({ x: 0, y: 100, z: 0 });
+game.setBlock({ x: 0, y: 75, z: 0 }, 2);
 window.servo = servo;
 
 setInterval(function () {
