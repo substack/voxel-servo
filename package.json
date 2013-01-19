@@ -1,0 +1,33 @@
+{
+    "name" : "voxel-portal",
+    "version" : "0.0.0",
+    "description" : "create teleport portals for voxel.js textured with the camera view at the destination",
+    "main" : "index.js",
+    "dependencies" : {
+        "voxel-camera" : "~0.1.0",
+        "inherits" : "~1.0.0"
+    },
+    "devDependencies" : {
+        "browserify" : "~1.17.2",
+        "voxel-debris" : "~0.0.4",
+        "voxel-engine" : "~0.2.7"
+    },
+    "repository" : {
+        "type" : "git",
+        "url" : "git://github.com/substack/voxel-portal.git"
+    },
+    "homepage" : "https://github.com/substack/voxel-portal",
+    "keywords" : [
+        "voxel",
+        "game",
+        "teleport",
+        "portal",
+        "stargate"
+    ],
+    "author" : {
+        "name" : "James Halliday",
+        "email" : "mail@substack.net",
+        "url" : "http://substack.net"
+    },
+    "license" : "MIT"
+}
