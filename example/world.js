@@ -12,6 +12,7 @@ var game = createEngine({
     startingPosition: [ 0, 200, 0 ]
 });
 
+window.game = game;
 game.appendTo('#container');
 game.on('mousedown', function (pos) {
     if (erase) return explode(pos)
@@ -30,45 +31,21 @@ game.on('mousedown', function (pos) {
             var chunk = voxel.generate(low, high, zeros);
             var vi = game.voxels.voxelIndex({ x: 0, y: 0, z: 0 });
             chunk.voxels[vi] = 3;
-            var m = generateMesh(game, chunk, p)
+            
+            var detached = game.detachChunk(chunk);
+            detached.position.x = p.x
+            detached.position.y = p.y
+            detached.position.z = p.z
+            
+            servo.on('rotation', function (rot) {
+                detached.rotation.y = rot;
+            });
         }
     }
     else {
         game.createBlock(pos, 1)
     }
 });
-
-function generateMesh (game, chunk, p) {
-    var T = game.THREE;
-    var size = game.cubeSize
-    var scale = new T.Vector3(size, size, size);
-    var mesh = voxelMesh(chunk, voxel.meshers.greedy, scale, T);
-    
-    mesh.createSurfaceMesh(game.material);
-    var smesh = mesh.surfaceMesh;
-    
-    mesh.setPosition(0, p.y, 0);
-    
-    var mover = new T.Object3D;
-    var rotater = new T.Object3D;
-    mover.position.x += size / 2;
-    mover.position.z += size / 2;
-    
-    rotater.add(smesh);
-    mover.add(rotater);
-    
-    game.scene.add(mover);
-    game._materialEngine.applyTextures(mesh.geometry);
-    
-    smesh.position.x = p.x - size / 2;
-    smesh.position.z = p.z - size / 2;
-    
-    servo.on('rotation', function (rot) {
-        rotater.rotation.y = rot;
-    });
-    
-    return mesh;
-}
 
 window.addEventListener('keydown', ctrlToggle);
 window.addEventListener('keyup', ctrlToggle);
