@@ -11,7 +11,6 @@ var game = createEngine({
     materials: [ 'grass_top', 'obsidian', 'netherrack' ],
     startingPosition: [ 0, 200, 0 ]
 });
-window.game = game;
 
 game.appendTo('#container');
 game.on('mousedown', function (pos) {
@@ -26,11 +25,12 @@ game.on('mousedown', function (pos) {
         p.y += size;
         var value = game.getBlock(p);
         if (!value) {
-            var chunk = game.voxels.generateChunk(0, 0, 0);
-            var vi = game.voxels.voxelIndex(p);
+            var low = [0,0,0], high = [32,32,32];
+            var zeros = function (x,y,z) { return 0 };
+            var chunk = voxel.generate(low, high, zeros);
+            var vi = game.voxels.voxelIndex({ x: 0, y: 0, z: 0 });
             chunk.voxels[vi] = 3;
             var m = generateMesh(game, chunk, p)
-window.mesh = m.surfaceMesh;
         }
     }
     else {
@@ -47,17 +47,24 @@ function generateMesh (game, chunk, p) {
     mesh.createSurfaceMesh(game.material);
     var smesh = mesh.surfaceMesh;
     
-    var bounds = game.voxels.getBounds(chunk.position);
-    mesh.setPosition(0, 0, 0);
-    smesh.position.x += p.x;
-    smesh.position.y += -29 * size + p.y;
-    smesh.position.z += -3 * size + p.z;
+    mesh.setPosition(0, p.y, 0);
     
-    game.scene.add(smesh);
+    var mover = new T.Object3D;
+    var rotater = new T.Object3D;
+    mover.position.x += size / 2;
+    mover.position.z += size / 2;
+    
+    rotater.add(smesh);
+    mover.add(rotater);
+    
+    game.scene.add(mover);
     game._materialEngine.applyTextures(mesh.geometry);
     
+    smesh.position.x = p.x - size / 2;
+    smesh.position.z = p.z - size / 2;
+    
     servo.on('rotation', function (rot) {
-        smesh.rotation.y = rot;
+        rotater.rotation.y = rot;
     });
     
     return mesh;
@@ -74,7 +81,6 @@ game.requestPointerLock('canvas');
 var createServo = require('../')(game);
 var servo = createServo({ x: 0, y: 100, z: 0 });
 game.setBlock({ x: 0, y: 75, z: 0 }, 2);
-window.servo = servo;
 
 setInterval(function () {
     servo.rotate(Math.PI / 64);
