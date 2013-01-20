@@ -21,7 +21,7 @@ game.on('mousedown', function (pos) {
     var v = c && c.voxelVector;
     var p = v && new game.THREE.Vector3(v.x, v.y, v.z).multiplyScalar(size);
     
-    if (c && p.x === 0 && p.y === 100 && p.z === 0) {
+    if (c && p.x === 0 && p.y === 75 && p.z === 0) {
         p.y += size;
         var value = game.getBlock(p);
         if (!value) {
@@ -79,8 +79,7 @@ function ctrlToggle (ev) { erase = !ev.ctrlKey }
 game.requestPointerLock('canvas');
 
 var createServo = require('../')(game);
-var servo = createServo({ x: 0, y: 100, z: 0 });
-game.setBlock({ x: 0, y: 75, z: 0 }, 2);
+var servo = createServo({ x: 0, y: 75, z: 0 });
 
 setInterval(function () {
     servo.rotate(Math.PI / 64);
