@@ -23,16 +23,14 @@ game.on('mousedown', function (pos) {
     var p = v && new game.THREE.Vector3(v.x, v.y, v.z).multiplyScalar(size);
     
     if (c && p.x === 0 && p.y === 75 && p.z === 0) {
+console.log('point!', p.x, p.y, p.z)
         p.y += size;
         var value = game.getBlock(p);
         if (!value) {
-            var low = [0,0,0], high = [32,32,32];
-            var zeros = function (x,y,z) { return 0 };
-            var chunk = voxel.generate(low, high, zeros);
             var vi = game.voxels.voxelIndex({ x: 0, y: 0, z: 0 });
-            chunk.voxels[vi] = 3;
+            var detached = game.detachChunk();
+            detached.set('0|0|0', vi, 3);
             
-            var detached = game.detachChunk(chunk);
             detached.position.x = p.x
             detached.position.y = p.y
             detached.position.z = p.z
