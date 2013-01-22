@@ -4,13 +4,12 @@
     "description" : "animate voxel geometry with servo bricks",
     "main" : "index.js",
     "dependencies" : {
-        "voxel-camera" : "~0.1.0",
         "inherits" : "~1.0.0"
     },
     "devDependencies" : {
         "browserify" : "~1.17.2",
         "voxel-debris" : "~0.0.4",
-        "voxel-engine" : "*",
+        "voxel-engine" : "git://github.com/substack/voxel-engine.git#detached",
         "voxel" : "*",
         "voxel-mesh" : "*"
     },
